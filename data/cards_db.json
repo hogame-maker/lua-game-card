@@ -1,0 +1,37 @@
+{
+    "monsters": [
+        {
+            "id": "mon_001",
+            "name": "Guardião",
+            "cost": 3,
+            "attack": 2,
+            "defense": 2,
+            "imagePath": "assets/cards/monstros/guardiao.png",
+            "treasureReward": 1,
+            "evolutionBonus": {"attribute": "defense", "value": 1},
+            "effect_id": "defende_entrada"
+        },
+        {
+            "id": "mon_002",
+            "name": "Dragão Menor",
+            "cost": 5,
+            "attack": 4,
+            "defense": 3,
+            "imagePath": "assets/cards/monstros/dragao_menor.png",
+            "treasureReward": 2,
+            "evolutionBonus": {"attribute": "attack", "value": 1},
+            "effect_id": "sopro_fogo"
+        }
+    ],
+    "treasures": [
+        {
+            "id": "tes_001",
+            "name": "Espada Longa",
+            "cost": 0,
+            "attack": 2,
+            "defense": 0,
+            "imagePath": "assets/cards/tesouros/espada.png",
+            "effect_id": "equip_espada"
+        }
+    ]
+}
