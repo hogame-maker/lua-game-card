@@ -37,8 +37,8 @@ function love.update(dt)
         splashAlpha = math.min(1, splashAlpha + dt * 2)  -- Fade in
         if splashTimer >= splashDuration then
             currentState = "login"
-            -- Init login UI
-            local startButton = Button:new(540, 320, 200, 60, "Iniciar", startGame, "imagecard/buttonstart.png")
+            -- Init login UI - Botão dimensionado para tela inteira
+            local startButton = Button:new(490, 280, 300, 160, "Iniciar", startGame, "imagecard/buttonstart.png")
             startButton.alpha = 0
             UIManager:register(startButton)
         end
@@ -61,16 +61,6 @@ function love.draw()
         love.graphics.setColor(1, 1, 1, splashAlpha)
         love.graphics.setColor(1, 1, 1)
     elseif currentState == "login" then
-        -- Container cinza claro
-        love.graphics.setColor(0.8, 0.8, 0.8, 0.9)
-        love.graphics.rectangle("fill", 350, 200, 580, 320, 15)
-        
-        -- Borda
-        love.graphics.setColor(0.6, 0.6, 0.6)
-        love.graphics.setLineWidth(3)
-        love.graphics.rectangle("line", 350, 200, 580, 320, 15)
-        love.graphics.setLineWidth(1)
-        
         UIManager:draw()
     elseif currentState == "game" then
         GameState:draw()
