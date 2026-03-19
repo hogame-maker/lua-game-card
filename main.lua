@@ -21,6 +21,7 @@ local gameMenu
 local currentSaveIndex = nil
 
 local function startGame()
+    selectSaveModal:refreshSaveSlots()
     selectSaveModal:show()
 end
 
@@ -33,12 +34,30 @@ local function onSelectSave(saveIndex, saveData, slotUI)
     
     if saveData then
         GameState:loadFromSaveData(saveData)
+    else
+        GameState:init()
+    end
+    
+    -- Cria/atualiza o GameMenu com o estado atual (para ambos os casos)
+    gameMenu = GameMenu:new(
+        GameState,
+        function() print("Templo") end,
+        function() print("Taverna") end,
+        function() print("Batalha em Terrenos") end,
+        function() 
+            currentState = "login"
+            gameMenu:hide()
+            setupLoginButtons()
+        end
+    )
+    
+    if saveData then
         -- Se já tem dados salvos, vai direto para o menu principal
         currentState = "main_menu"
         selectSaveModal:hide()
+        gameMenu:show()
     else
         -- Se é um novo save, pede o nome do jogador
-        GameState:init()
         currentState = "name_input"
         selectSaveModal:hide()
         inputDialog:show()
@@ -184,23 +203,33 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    -- A modal de saves tem prioridade quando está visível
+    if selectSaveModal.visible then
+        selectSaveModal:mousepressed(x, y, button)
+        return
+    end
+    
     if currentState == "name_input" then
         inputDialog:mousepressed(x, y, button)
     elseif currentState == "main_menu" then
         gameMenu:mousepressed(x, y, button)
-    else
-        selectSaveModal:mousepressed(x, y, button)
+    elseif currentState == "login" then
         UIManager:mousepressed(x, y, button)
     end
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    -- A modal de saves tem prioridade quando está visível
+    if selectSaveModal.visible then
+        selectSaveModal:mousemoved(x, y)
+        return
+    end
+    
     if currentState == "name_input" then
         inputDialog:mousemoved(x, y)
     elseif currentState == "main_menu" then
         gameMenu:mousemoved(x, y)
-    else
-        selectSaveModal:mousemoved(x, y)
+    elseif currentState == "login" then
         UIManager:mousemoved(x, y)
     end
 end

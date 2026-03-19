@@ -33,8 +33,16 @@ function SaveSlot:new(x, y, w, h, saveData)
 end
 
 function SaveSlot:isHovered(mx, my)
-    return mx >= self.x and mx <= self.x + self.w and
-           my >= self.y and my <= self.y + self.h
+    -- Considera a escala de expansão na detecção de clique
+    local centerX = self.x + self.w / 2
+    local centerY = self.y + self.h / 2
+    local drawW = self.w * self.expandedScale
+    local drawH = self.h * self.expandedScale
+    local drawX = centerX - drawW / 2
+    local drawY = centerY - drawH / 2
+    
+    return mx >= drawX and mx <= drawX + drawW and
+           my >= drawY and my <= drawY + drawH
 end
 
 function SaveSlot:update(dt)
