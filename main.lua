@@ -16,10 +16,6 @@ local function startGame()
     UIManager:clear()
 end
 
-local function exitGame()
-    love.event.quit()
-end
-
 function love.load()
     -- Inicializa fontes e assets principais
     love.graphics.setDefaultFilter("linear", "linear")
@@ -42,12 +38,9 @@ function love.update(dt)
         if splashTimer >= splashDuration then
             currentState = "login"
             -- Init login UI
-            local startButton = Button:new(540, 300, 200, 50, "Iniciar Game", startGame)
-            local exitButton = Button:new(540, 370, 200, 50, "Sair do Game", exitGame)
+            local startButton = Button:new(540, 320, 200, 60, "Iniciar", startGame, "imagecard/buttonstart.png")
             startButton.alpha = 0
-            exitButton.alpha = 0
             UIManager:register(startButton)
-            UIManager:register(exitButton)
         end
     elseif currentState == "login" then
         -- Animate buttons fade in
@@ -67,14 +60,28 @@ function love.draw()
     if currentState == "splash" then
         love.graphics.setColor(1, 1, 1, splashAlpha)
         love.graphics.setColor(1, 1, 1)
-    elseif currentState == "login" or currentState == "game" then
-        if currentState == "game" then
-            GameState:draw()
-        end
+    elseif currentState == "login" then
+        -- Container cinza claro
+        love.graphics.setColor(0.8, 0.8, 0.8, 0.9)
+        love.graphics.rectangle("fill", 350, 200, 580, 320, 15)
+        
+        -- Borda
+        love.graphics.setColor(0.6, 0.6, 0.6)
+        love.graphics.setLineWidth(3)
+        love.graphics.rectangle("line", 350, 200, 580, 320, 15)
+        love.graphics.setLineWidth(1)
+        
+        UIManager:draw()
+    elseif currentState == "game" then
+        GameState:draw()
         UIManager:draw()
     end
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
     UIManager:mousepressed(x, y, button)
+end
+
+function love.mousemoved(x, y, dx, dy, istouch)
+    UIManager:mousemoved(x, y)
 end

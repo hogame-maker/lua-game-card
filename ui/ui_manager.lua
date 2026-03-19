@@ -16,10 +16,21 @@ function UIManager:draw()
     end
 end
 
+function UIManager:mousemoved(x, y)
+    for _, el in ipairs(self.elements) do
+        if el.isHovered then
+            el.hovered = el:isHovered(x, y)
+        end
+    end
+end
+
 function UIManager:mousepressed(x, y, button)
     if button == 1 then
         for _, el in ipairs(self.elements) do
             if el:isHovered(x, y) and el.onClick then
+                if el.isPressed ~= nil then
+                    el.isPressed = true
+                end
                 el:onClick()
             end
         end
