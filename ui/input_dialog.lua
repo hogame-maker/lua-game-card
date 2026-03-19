@@ -232,3 +232,5 @@ function InputDialog:draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.setLineWidth(1)
 end
+
+return InputDialog
