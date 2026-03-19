@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+*.o
+*.a
+*.so
+
+# LÖVE generated files
+*.love
+dist/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
