@@ -30,4 +30,8 @@ function UIManager:register(element)
     table.insert(self.elements, element)
 end
 
+function UIManager:clear()
+    self.elements = {}
+end
+
 return UIManager
