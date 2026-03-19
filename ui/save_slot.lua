@@ -83,22 +83,26 @@ function SaveSlot:draw()
     
     -- Nome do personagem ou "Novo Save"
     local displayName = self.saveData.characterName or "Novo Save"
+    if self.saveData.isEmpty then
+        displayName = "Slot vazio"
+    end
     love.graphics.printf(displayName, drawX + 10, drawY + 15, drawW - 20, "center")
     
     -- Se expandido, mostra informações
     if self.expandedScale > 1.05 then
         love.graphics.setFont(self.smallFont)
         love.graphics.setColor(0.9, 0.9, 0.9)
-        
-        -- Calcula horas e minutos
-        local totalMinutes = self.saveData.playTime
-        local hours = math.floor(totalMinutes / 60)
-        local minutes = totalMinutes % 60
-        local playTimeStr = string.format("%dh %dm", hours, minutes)
-        
-        -- Mostra tempo de jogo
-        love.graphics.printf("Tempo: " .. playTimeStr, drawX + 10, drawY + 50, drawW - 20, "center")
-        love.graphics.printf("Último jogo: " .. self.saveData.lastPlayed, drawX + 10, drawY + 70, drawW - 20, "center")
+
+        if self.saveData.isEmpty then
+            love.graphics.printf("Clique para criar um novo save", drawX + 10, drawY + 45, drawW - 20, "center")
+        else
+            local totalMinutes = self.saveData.playTime or 0
+            local hours = math.floor(totalMinutes / 60)
+            local minutes = totalMinutes % 60
+            local playTimeStr = string.format("%dh %dm", hours, minutes)
+            love.graphics.printf("Tempo: " .. playTimeStr, drawX + 10, drawY + 45, drawW - 20, "center")
+            love.graphics.printf("Último jogo: " .. self.saveData.lastPlayed, drawX + 10, drawY + 70, drawW - 20, "center")
+        end
     end
     
     love.graphics.setLineWidth(1)

@@ -3,8 +3,10 @@ local GameState = require "game.game_state"
 local UIManager = require "ui.ui_manager"
 local Button = require "ui.button"
 local Modal = require "ui.modal"
+local SaveManager = require "data.save_manager"
 
 local currentState = "splash"
+local saveManager = nil
 local splashTimer = 0
 local splashDuration = 3
 local splashAlpha = 0
@@ -21,15 +23,24 @@ local function exitGame()
     love.event.quit()
 end
 
-local function onSelectSave(saveIndex, saveData)
+local function onSelectSave(saveIndex, saveData, slotUI)
+    if saveData then
+        GameState:loadFromSaveData(saveData)
+    else
+        GameState:init()
+    end
+
+    -- Salva o estado do jogo ao iniciar (as slots são atualizadas)
+    local newSave = GameState:toSaveData()
+    saveManager:setSlot(saveIndex, newSave)
+
     currentState = "game"
     UIManager:clear()
-    print("Save selecionado:", saveIndex, saveData.characterName)
+    selectSaveModal:refreshSaveSlots()
+    print("Save carregado:", saveIndex)
 end
 
-local function onCancelSaveSelection()
-    -- Retorna ao menu de login sem fechar toda a tela
-    currentState = "login"
+local function setupLoginButtons()
     UIManager:clear()
     local startButton = Button:new(540, 280, 200, 50, "Iniciar Game", startGame)
     local exitButton = Button:new(540, 350, 200, 50, "Sair do Game", exitGame)
@@ -37,6 +48,11 @@ local function onCancelSaveSelection()
     exitButton.alpha = 1
     UIManager:register(startButton)
     UIManager:register(exitButton)
+end
+
+local function onCancelSaveSelection()
+    currentState = "login"
+    setupLoginButtons()
 end
 
 function love.load()
@@ -52,9 +68,12 @@ function love.load()
     -- Inicializa o estado principal do jogo
     GameState:init()
     UIManager:init()
-    
+
+    saveManager = SaveManager:new()
     -- Inicializa modal de seleção de saves
-    selectSaveModal = Modal:new("Selecione um Save", onSelectSave, onCancelSaveSelection)
+    selectSaveModal = Modal:new("Selecione um Save", onSelectSave, onCancelSaveSelection, saveManager)
+
+    setupLoginButtons()
 end
 
 function love.update(dt)

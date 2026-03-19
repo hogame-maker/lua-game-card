@@ -3,11 +3,12 @@ local SaveSlot = require "ui.save_slot"
 local Modal = {}
 Modal.__index = Modal
 
-function Modal:new(title, onSelectCallback, onCancelCallback)
+function Modal:new(title, onSelectCallback, onCancelCallback, saveManager)
     local obj = {
         title = title,
         onSelectCallback = onSelectCallback,
         onCancelCallback = onCancelCallback,
+        saveManager = saveManager,
         
         -- Tamanho e posição
         width = 1200,
@@ -21,50 +22,48 @@ function Modal:new(title, onSelectCallback, onCancelCallback)
         alpha = 0,
         targetAlpha = 0,
         
-        -- Dados de saves
+        -- Dados de saves (slot UI)
         saveSlots = {},
         
         -- Fontes
         titleFont = love.graphics.newFont(24),
         font = love.graphics.newFont(16)
     }
-    
     setmetatable(obj, Modal)
-    
-    -- Cria 3 save slots com dados zerados (tempo = 0)
-    local saves = {
-        {
-            id = 1,
-            characterName = "Save 1",
-            playTime = 0,
-            lastPlayed = "Nunca"
-        },
-        {
-            id = 2,
-            characterName = "Save 2",
-            playTime = 0,
-            lastPlayed = "Nunca"
-        },
-        {
-            id = 3,
-            characterName = "Novo Save",
-            playTime = 0,
-            lastPlayed = "Nunca"
-        }
-    }
-    
-    for i, saveData in ipairs(saves) do
-        local slot = SaveSlot:new(
-            200 + (i - 1) * 320,
-            150,
-            280,
-            450,
-            saveData
-        )
-        table.insert(obj.saveSlots, slot)
-    end
-    
+
+    obj:refreshSaveSlots()
     return obj
+end
+
+function Modal:refreshSaveSlots()
+    self.saveSlots = {}
+    local baseX = 200
+    local baseY = 150
+    local width = 280
+    local height = 450
+
+    for i = 1, 3 do
+        local slotData = self.saveManager and self.saveManager:getSlot(i) or nil
+        local displayData = {
+            slotIndex = i,
+            characterName = slotData and slotData.occupied and slotData.gameData and slotData.gameData.players and slotData.gameData.players[1] and slotData.gameData.players[1].name or ("Slot " .. i),
+            playTime = slotData and slotData.occupied and slotData.gameData and slotData.gameData.playTime or 0,
+            lastPlayed = slotData and slotData.savedAt or "Nunca",
+            isEmpty = not (slotData and slotData.occupied)
+        }
+
+        local slot = SaveSlot:new(
+            baseX + (i - 1) * 320,
+            baseY,
+            width,
+            height,
+            displayData
+        )
+
+        slot.slotIndex = i
+        slot.rawSlot = slotData
+        table.insert(self.saveSlots, slot)
+    end
 end
 
 function Modal:show()
@@ -123,8 +122,17 @@ function Modal:mousepressed(x, y, button)
 
     for i, slot in ipairs(self.saveSlots) do
         if slot:isHovered(x, y) then
+            local slotData = slot.rawSlot
+            local launchData = nil
+            if slotData and slotData.occupied and slotData.gameData then
+                launchData = slotData.gameData
+            else
+                -- Novo save: gera a estrutura baseada no template
+                launchData = nil
+            end
+
             if self.onSelectCallback then
-                self.onSelectCallback(i, slot.saveData)
+                self.onSelectCallback(i, launchData, slot)
             end
             self:hide()
             break

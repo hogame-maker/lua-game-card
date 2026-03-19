@@ -8,7 +8,9 @@ function Player:new(name)
         monsters = {},     -- Monstros controlados caso atue como Oponente
         hand = {},         -- Cartas de ação
         maxHandSize = 6,
-        treasures = {}
+        treasures = {},
+        actions = {},      -- Ações disponíveis no turno
+        playTime = 0       -- Tempo total do jogador (minutos)
     }
     setmetatable(obj, Player)
     return obj
@@ -20,6 +22,14 @@ function Player:addHero(heroCard)
         return true
     end
     return false
+end
+
+function Player:addAction(action)
+    table.insert(self.actions, action)
+end
+
+function Player:clearActions()
+    self.actions = {}
 end
 
 function Player:getGroupPower()
