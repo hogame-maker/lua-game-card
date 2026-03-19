@@ -60,6 +60,10 @@ function GameState:toSaveData()
             maxHandSize = player.maxHandSize,
             playTime = player.playTime or 0,
             actions = player.actions or {},
+            level = player.level or 1,
+            gold = player.gold or 0,
+            experience = player.experience or 0,
+            photoPath = player.photoPath,
             heroes = {},
             monsters = {},
             hand = {},
@@ -97,6 +101,10 @@ function GameState:loadFromSaveData(data)
         p.maxHandSize = pData.maxHandSize or 6
         p.playTime = pData.playTime or 0
         p.actions = pData.actions or {}
+        p.level = pData.level or 1
+        p.gold = pData.gold or 0
+        p.experience = pData.experience or 0
+        p.photoPath = pData.photoPath
 
         p.heroes = {}
         for _, hData in ipairs(pData.heroes or {}) do

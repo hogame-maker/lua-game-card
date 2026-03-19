@@ -4,6 +4,8 @@ local UIManager = require "ui.ui_manager"
 local Button = require "ui.button"
 local Modal = require "ui.modal"
 local SaveManager = require "data.save_manager"
+local InputDialog = require "ui.input_dialog"
+local GameMenu = require "ui.game_menu"
 
 local currentState = "splash"
 local saveManager = nil
@@ -14,6 +16,9 @@ local loginTimer = 0
 local background
 local bgScaleX, bgScaleY
 local selectSaveModal
+local inputDialog
+local gameMenu
+local currentSaveIndex = nil
 
 local function startGame()
     selectSaveModal:show()
@@ -24,20 +29,20 @@ local function exitGame()
 end
 
 local function onSelectSave(saveIndex, saveData, slotUI)
+    currentSaveIndex = saveIndex
+    
     if saveData then
         GameState:loadFromSaveData(saveData)
+        -- Se já tem dados salvos, vai direto para o menu principal
+        currentState = "main_menu"
+        selectSaveModal:hide()
     else
+        -- Se é um novo save, pede o nome do jogador
         GameState:init()
+        currentState = "name_input"
+        selectSaveModal:hide()
+        inputDialog:show()
     end
-
-    -- Salva o estado do jogo ao iniciar (as slots são atualizadas)
-    local newSave = GameState:toSaveData()
-    saveManager:setSlot(saveIndex, newSave)
-
-    currentState = "game"
-    UIManager:clear()
-    selectSaveModal:refreshSaveSlots()
-    print("Save carregado:", saveIndex)
 end
 
 local function setupLoginButtons()
@@ -48,6 +53,42 @@ local function setupLoginButtons()
     exitButton.alpha = 1
     UIManager:register(startButton)
     UIManager:register(exitButton)
+end
+
+local function onPlayerNameConfirmed(playerName)
+    -- Define o nome do jogador
+    GameState.players[1].name = playerName
+    GameState.players[1].level = 1
+    GameState.players[1].gold = 0
+    GameState.players[1].experience = 0
+    
+    -- Salva o estado do jogo ao iniciar
+    local newSave = GameState:toSaveData()
+    saveManager:setSlot(currentSaveIndex, newSave)
+    
+    -- Atualiza o modal e vai para o menu principal
+    selectSaveModal:refreshSaveSlots()
+    
+    -- Cria/atualiza o GameMenu com o estado atual
+    gameMenu = GameMenu:new(
+        GameState,
+        function() print("Templo") end,
+        function() print("Taverna") end,
+        function() print("Batalha em Terrenos") end,
+        function() 
+            currentState = "login"
+            gameMenu:hide()
+            setupLoginButtons()
+        end
+    )
+    
+    currentState = "main_menu"
+    gameMenu:show()
+end
+
+local function onPlayerNameCancelled()
+    currentState = "login"
+    setupLoginButtons()
 end
 
 local function onCancelSaveSelection()
@@ -70,8 +111,20 @@ function love.load()
     UIManager:init()
 
     saveManager = SaveManager:new()
-    -- Inicializa modal de seleção de saves
+    
+    -- Inicializa componentes de UI
     selectSaveModal = Modal:new("Selecione um Save", onSelectSave, onCancelSaveSelection, saveManager)
+    inputDialog = InputDialog:new("Nome do Jogador", "Digite seu nome...", onPlayerNameConfirmed, onPlayerNameCancelled)
+    gameMenu = GameMenu:new(GameState, 
+        function() print("Templo") end,
+        function() print("Taverna") end,
+        function() print("Batalha em Terrenos") end,
+        function() 
+            currentState = "login"
+            gameMenu:hide()
+            setupLoginButtons()
+        end
+    )
 
     setupLoginButtons()
 end
@@ -95,6 +148,10 @@ function love.update(dt)
         for _, el in ipairs(UIManager.elements) do
             el.alpha = math.min(1, el.alpha + dt * 2)
         end
+    elseif currentState == "name_input" then
+        inputDialog:update(dt)
+    elseif currentState == "main_menu" then
+        gameMenu:update(dt)
     elseif currentState == "game" then
         GameState:update(dt)
         UIManager:update(dt)
@@ -113,6 +170,10 @@ function love.draw()
         love.graphics.setColor(1, 1, 1)
     elseif currentState == "login" then
         UIManager:draw()
+    elseif currentState == "name_input" then
+        inputDialog:draw()
+    elseif currentState == "main_menu" then
+        gameMenu:draw()
     elseif currentState == "game" then
         GameState:draw()
         UIManager:draw()
@@ -123,11 +184,35 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
-    selectSaveModal:mousepressed(x, y, button)
-    UIManager:mousepressed(x, y, button)
+    if currentState == "name_input" then
+        inputDialog:mousepressed(x, y, button)
+    elseif currentState == "main_menu" then
+        gameMenu:mousepressed(x, y, button)
+    else
+        selectSaveModal:mousepressed(x, y, button)
+        UIManager:mousepressed(x, y, button)
+    end
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-    selectSaveModal:mousemoved(x, y)
-    UIManager:mousemoved(x, y)
+    if currentState == "name_input" then
+        inputDialog:mousemoved(x, y)
+    elseif currentState == "main_menu" then
+        gameMenu:mousemoved(x, y)
+    else
+        selectSaveModal:mousemoved(x, y)
+        UIManager:mousemoved(x, y)
+    end
+end
+
+function love.textinput(text)
+    if currentState == "name_input" then
+        inputDialog:textinput(text)
+    end
+end
+
+function love.keypressed(key)
+    if currentState == "name_input" then
+        inputDialog:keypressed(key)
+    end
 end

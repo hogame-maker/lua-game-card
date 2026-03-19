@@ -10,7 +10,13 @@ function Player:new(name)
         maxHandSize = 6,
         treasures = {},
         actions = {},      -- Ações disponíveis no turno
-        playTime = 0       -- Tempo total do jogador (minutos)
+        playTime = 0,      -- Tempo total do jogador (minutos)
+        
+        -- Estatísticas do jogador
+        level = 1,
+        gold = 0,
+        experience = 0,
+        photoPath = nil    -- Caminho para foto do perfil
     }
     setmetatable(obj, Player)
     return obj
