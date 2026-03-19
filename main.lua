@@ -2,6 +2,7 @@
 local GameState = require "game.game_state"
 local UIManager = require "ui.ui_manager"
 local Button = require "ui.button"
+local Modal = require "ui.modal"
 
 local currentState = "splash"
 local splashTimer = 0
@@ -10,14 +11,20 @@ local splashAlpha = 0
 local loginTimer = 0
 local background
 local bgScaleX, bgScaleY
+local selectSaveModal
 
 local function startGame()
-    currentState = "game"
-    UIManager:clear()
+    selectSaveModal:show()
 end
 
 local function exitGame()
     love.event.quit()
+end
+
+local function onSelectSave(saveIndex, saveData)
+    currentState = "game"
+    UIManager:clear()
+    print("Save selecionado:", saveIndex, saveData.characterName)
 end
 
 function love.load()
@@ -33,6 +40,9 @@ function love.load()
     -- Inicializa o estado principal do jogo
     GameState:init()
     UIManager:init()
+    
+    -- Inicializa modal de seleção de saves
+    selectSaveModal = Modal:new("Selecione um Save", onSelectSave)
 end
 
 function love.update(dt)
@@ -58,6 +68,9 @@ function love.update(dt)
         GameState:update(dt)
         UIManager:update(dt)
     end
+    
+    -- Atualiza modal
+    selectSaveModal:update(dt)
 end
 
 function love.draw()
@@ -73,12 +86,17 @@ function love.draw()
         GameState:draw()
         UIManager:draw()
     end
+    
+    -- Desenha modal por cima de tudo
+    selectSaveModal:draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    selectSaveModal:mousepressed(x, y, button)
     UIManager:mousepressed(x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    selectSaveModal:mousemoved(x, y)
     UIManager:mousemoved(x, y)
 end
