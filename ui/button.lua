@@ -1,7 +1,7 @@
 local Button = {}
 Button.__index = Button
 
-function Button:new(x, y, w, h, text, callback, imagePath)
+function Button:new(x, y, w, h, text, callback)
     local obj = {
         x = x, y = y, w = w, h = h,
         text = text,
@@ -12,27 +12,14 @@ function Button:new(x, y, w, h, text, callback, imagePath)
         isPressed = false,
         pressAlpha = 0,
         
-        -- Cores
-        normalColor = {0.2, 0.6, 0.9},      -- Azul
-        hoverColor = {0.3, 0.7, 1},        -- Azul claro
-        pressColor = {0.1, 0.4, 0.7},      -- Azul escuro
-        
-        -- Imagem
-        imagePath = imagePath,
-        image = nil,
+        -- Cores preto
+        normalColor = {0.2, 0.2, 0.2},      -- Preto
+        hoverColor = {0.4, 0.4, 0.4},      -- Preto claro
+        pressColor = {0.1, 0.1, 0.1},      -- Preto escuro
         
         -- Fonte
         font = love.graphics.newFont(16)
     }
-    
-    -- Carrega imagem se fornecida
-    if imagePath then
-        local info = love.filesystem.getInfo(imagePath)
-        if info then
-            obj.image = love.graphics.newImage(imagePath)
-        end
-    end
-    
     setmetatable(obj, Button)
     return obj
 end
@@ -62,58 +49,37 @@ function Button:draw()
     local drawX = centerX - (self.w * scale) / 2
     local drawY = centerY - (self.h * scale) / 2
     
-    -- Se tem imagem, desenha a imagem
-    if self.image then
-        local imgWidth = self.image:getWidth()
-        local imgHeight = self.image:getHeight()
-        local scaleX = (self.w * scale) / imgWidth
-        local scaleY = (self.h * scale) / imgHeight
-        
-        -- Sombra
-        love.graphics.setColor(0, 0, 0, 0.3 * self.alpha)
-        love.graphics.draw(self.image, drawX + 4, drawY + 4, 0, scaleX, scaleY)
-        
-        -- Imagem
-        love.graphics.setColor(1, 1, 1, self.alpha)
-        love.graphics.draw(self.image, drawX, drawY, 0, scaleX, scaleY)
-        
-        -- Borda
-        love.graphics.setColor(1, 1, 1, self.alpha * 0.6)
-        love.graphics.setLineWidth(2)
-        love.graphics.rectangle("line", drawX, drawY, self.w * scale, self.h * scale, 8)
-    else
-        -- Cores baseadas no estado
-        local r, g, b = unpack(self.normalColor)
-        if self.hovered then
-            r, g, b = unpack(self.hoverColor)
-        end
-        if self.isPressed then
-            r, g, b = unpack(self.pressColor)
-        end
-        
-        -- Desenha sombra
-        love.graphics.setColor(0, 0, 0, 0.3 * self.alpha)
-        love.graphics.rectangle("fill", drawX + 4, drawY + 4, self.w * scale, self.h * scale, 8)
-        
-        -- Desenha fundo do botão
-        love.graphics.setColor(r, g, b, self.alpha)
-        love.graphics.rectangle("fill", drawX, drawY, self.w * scale, self.h * scale, 8)
-        
-        -- Desenha borda
-        love.graphics.setColor(1, 1, 1, self.alpha * 0.6)
-        love.graphics.setLineWidth(2)
-        love.graphics.rectangle("line", drawX, drawY, self.w * scale, self.h * scale, 8)
-        
-        -- Desenha texto centralizado
-        love.graphics.setColor(1, 1, 1, self.alpha)
-        local textWidth = self.font:getWidth(self.text)
-        local textHeight = self.font:getHeight()
-        love.graphics.print(
-            self.text,
-            drawX + (self.w * scale - textWidth) / 2,
-            drawY + (self.h * scale - textHeight) / 2
-        )
+    -- Cores baseadas no estado
+    local r, g, b = unpack(self.normalColor)
+    if self.hovered then
+        r, g, b = unpack(self.hoverColor)
     end
+    if self.isPressed then
+        r, g, b = unpack(self.pressColor)
+    end
+    
+    -- Desenha sombra
+    love.graphics.setColor(0, 0, 0, 0.3 * self.alpha)
+    love.graphics.rectangle("fill", drawX + 4, drawY + 4, self.w * scale, self.h * scale, 8)
+    
+    -- Desenha fundo do botão
+    love.graphics.setColor(r, g, b, self.alpha)
+    love.graphics.rectangle("fill", drawX, drawY, self.w * scale, self.h * scale, 8)
+    
+    -- Desenha borda
+    love.graphics.setColor(1, 1, 1, self.alpha * 0.6)
+    love.graphics.setLineWidth(2)
+    love.graphics.rectangle("line", drawX, drawY, self.w * scale, self.h * scale, 8)
+    
+    -- Desenha texto centralizado
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    local textWidth = self.font:getWidth(self.text)
+    local textHeight = self.font:getHeight()
+    love.graphics.print(
+        self.text,
+        drawX + (self.w * scale - textWidth) / 2,
+        drawY + (self.h * scale - textHeight) / 2
+    )
     
     love.graphics.setLineWidth(1)
     love.graphics.setFont(prevFont)

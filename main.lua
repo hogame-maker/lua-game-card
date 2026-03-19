@@ -16,6 +16,10 @@ local function startGame()
     UIManager:clear()
 end
 
+local function exitGame()
+    love.event.quit()
+end
+
 function love.load()
     -- Inicializa fontes e assets principais
     love.graphics.setDefaultFilter("linear", "linear")
@@ -37,10 +41,13 @@ function love.update(dt)
         splashAlpha = math.min(1, splashAlpha + dt * 2)  -- Fade in
         if splashTimer >= splashDuration then
             currentState = "login"
-            -- Init login UI - Botão dimensionado para tela inteira
-            local startButton = Button:new(490, 280, 300, 160, "Iniciar", startGame, "imagecard/buttonstart.png")
+            -- Init login UI - Botões centralizados, um em cima do outro
+            local startButton = Button:new(540, 280, 200, 50, "Iniciar Game", startGame)
+            local exitButton = Button:new(540, 350, 200, 50, "Sair do Game", exitGame)
             startButton.alpha = 0
+            exitButton.alpha = 0
             UIManager:register(startButton)
+            UIManager:register(exitButton)
         end
     elseif currentState == "login" then
         -- Animate buttons fade in
