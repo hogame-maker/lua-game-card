@@ -3,14 +3,18 @@ local SaveSlot = require "ui.save_slot"
 local Modal = {}
 Modal.__index = Modal
 
-function Modal:new(title, onSelectCallback)
+function Modal:new(title, onSelectCallback, onCancelCallback)
     local obj = {
         title = title,
         onSelectCallback = onSelectCallback,
+        onCancelCallback = onCancelCallback,
         
         -- Tamanho e posição
         width = 1200,
         height = 650,
+        
+        -- Botão voltar
+        backButton = {w = 120, h = 35, offsetX = 30, offsetY = 25}
         
         -- Estados
         visible = false,
@@ -27,19 +31,19 @@ function Modal:new(title, onSelectCallback)
     
     setmetatable(obj, Modal)
     
-    -- Cria 3 save slots com dados de exemplo
+    -- Cria 3 save slots com dados zerados (tempo = 0)
     local saves = {
         {
             id = 1,
             characterName = "Save 1",
-            playTime = 1440, -- 24 horas
-            lastPlayed = "Hoje às 15:30"
+            playTime = 0,
+            lastPlayed = "Nunca"
         },
         {
             id = 2,
             characterName = "Save 2",
-            playTime = 480, -- 8 horas
-            lastPlayed = "Ontem"
+            playTime = 0,
+            lastPlayed = "Nunca"
         },
         {
             id = 3,
@@ -98,7 +102,21 @@ end
 
 function Modal:mousepressed(x, y, button)
     if not self.visible or button ~= 1 then return end
-    
+
+    local modalX = (1280 - self.width) / 2
+    local modalY = (720 - self.height) / 2
+    local b = self.backButton
+    local backX = modalX + b.offsetX
+    local backY = modalY + b.offsetY
+
+    if x >= backX and x <= backX + b.w and y >= backY and y <= backY + b.h then
+        self:hide()
+        if self.onCancelCallback then
+            self.onCancelCallback()
+        end
+        return
+    end
+
     for i, slot in ipairs(self.saveSlots) do
         if slot:isHovered(x, y) then
             if self.onSelectCallback then
@@ -134,6 +152,17 @@ function Modal:draw()
     love.graphics.setFont(self.titleFont)
     love.graphics.setColor(1, 1, 1, self.alpha)
     love.graphics.printf(self.title, modalX, modalY + 20, self.width, "center")
+
+    -- Botão voltar
+    local b = self.backButton
+    local backX = modalX + b.offsetX
+    local backY = modalY + b.offsetY
+    love.graphics.setColor(0.2, 0.2, 0.2, self.alpha)
+    love.graphics.rectangle("fill", backX, backY, b.w, b.h, 8)
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    love.graphics.rectangle("line", backX, backY, b.w, b.h, 8)
+    love.graphics.setFont(self.font)
+    love.graphics.printf("Voltar", backX, backY + 8, b.w, "center")
     
     -- Draw save slots
     love.graphics.setFont(prevFont)

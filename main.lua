@@ -27,6 +27,18 @@ local function onSelectSave(saveIndex, saveData)
     print("Save selecionado:", saveIndex, saveData.characterName)
 end
 
+local function onCancelSaveSelection()
+    -- Retorna ao menu de login sem fechar toda a tela
+    currentState = "login"
+    UIManager:clear()
+    local startButton = Button:new(540, 280, 200, 50, "Iniciar Game", startGame)
+    local exitButton = Button:new(540, 350, 200, 50, "Sair do Game", exitGame)
+    startButton.alpha = 1
+    exitButton.alpha = 1
+    UIManager:register(startButton)
+    UIManager:register(exitButton)
+end
+
 function love.load()
     -- Inicializa fontes e assets principais
     love.graphics.setDefaultFilter("linear", "linear")
@@ -42,7 +54,7 @@ function love.load()
     UIManager:init()
     
     -- Inicializa modal de seleção de saves
-    selectSaveModal = Modal:new("Selecione um Save", onSelectSave)
+    selectSaveModal = Modal:new("Selecione um Save", onSelectSave, onCancelSaveSelection)
 end
 
 function love.update(dt)
