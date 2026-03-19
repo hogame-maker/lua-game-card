@@ -14,7 +14,7 @@ function Modal:new(title, onSelectCallback, onCancelCallback)
         height = 650,
         
         -- Botão voltar
-        backButton = {w = 120, h = 35, offsetX = 30, offsetY = 25}
+        backButton = {w = 120, h = 35, offsetX = 30, offsetY = 25},
         
         -- Estados
         visible = false,
@@ -70,19 +70,23 @@ end
 function Modal:show()
     self.visible = true
     self.targetAlpha = 0.95
+    self.alpha = 0.95 -- mostra imediatamente
 end
 
 function Modal:hide()
     self.targetAlpha = 0
+    self.alpha = 0 -- fecha imediatamente
+    self.visible = false
 end
 
 function Modal:update(dt)
     if self.visible then
-        -- Animação de fade in/out
-        self.alpha = self.alpha + (self.targetAlpha - self.alpha) * dt * 3
+        -- Animação de fade in/out mais rápida
+        self.alpha = self.alpha + (self.targetAlpha - self.alpha) * dt * 12
         
-        if self.targetAlpha == 0 and self.alpha < 0.1 then
+        if self.targetAlpha == 0 and self.alpha < 0.02 then
             self.visible = false
+            self.alpha = 0
         end
         
         -- Atualiza os save slots
