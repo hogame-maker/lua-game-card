@@ -35,26 +35,26 @@ function GameMenu:new(gameState, onTemple, onTavern, onBattle, onReturn)
     
     -- Carrega background
     pcall(function()
-        obj.background = love.graphics.newImage("imagecard/background.png")
+        obj.background = love.graphics.newImage("imagecard/Menu_principal.png")
         local bgWidth, bgHeight = obj.background:getDimensions()
         obj.bgScaleX = 1280 / bgWidth
         obj.bgScaleY = 720 / bgHeight
     end)
     
-    -- Player info panel no topo
-    obj.playerPanel = PlayerInfoPanel:new(20, 20, 1240, 80, obj.player)
+    -- Player info panel no canto superior esquerdo
+    obj.playerPanel = PlayerInfoPanel:new(10, 10, 400, 80, obj.player)
     
-    -- Botões do menu
-    -- Templo - esquerda
-    obj.templeButton = Button:new(100, 300, 250, 200, "TEMPLO", onTemple)
+    -- Botões do menu no lado esquerdo
+    -- Templo - topo esquerdo
+    obj.templeButton = Button:new(50, 150, 300, 80, "TEMPLO", onTemple)
     
-    -- Taverna - centro
-    obj.tavernButton = Button:new(515, 300, 250, 200, "TAVERNA", onTavern)
+    -- Taverna - meio esquerdo
+    obj.tavernButton = Button:new(50, 250, 300, 80, "TAVERNA", onTavern)
     
-    -- Batalha em Terrenos - direita
-    obj.battleButton = Button:new(930, 300, 250, 200, "BATALHA EM\nTERREÑOS", onBattle)
+    -- Batalha em Terrenos - baixo esquerdo
+    obj.battleButton = Button:new(50, 350, 300, 80, "BATALHA EM\nTERREÑOS", onBattle)
     
-    -- Botão voltar (canto inferior)
+    -- Botão voltar (canto inferior esquerdo)
     obj.returnButton = Button:new(50, 650, 120, 50, "Voltar", onReturn)
     
     return obj

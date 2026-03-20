@@ -17,6 +17,9 @@ function Modal:new(title, onSelectCallback, onCancelCallback, saveManager)
         -- Botão voltar
         backButton = {w = 120, h = 35, offsetX = 30, offsetY = 25},
         
+        -- Botão configurações (engrenagem)
+        settingsButton = {w = 40, h = 40, offsetX = 1130, offsetY = 25},
+        
         -- Estados
         visible = false,
         alpha = 0,
@@ -120,6 +123,16 @@ function Modal:mousepressed(x, y, button)
         return
     end
 
+    -- Verifica clique no botão de configurações
+    local s = self.settingsButton
+    local settingsX = modalX + s.offsetX
+    local settingsY = modalY + s.offsetY
+    if x >= settingsX and x <= settingsX + s.w and y >= settingsY and y <= settingsY + s.h then
+        -- Abre popup de configurações (por enquanto, apenas print)
+        print("Abrindo configurações...")
+        return
+    end
+
     for i, slot in ipairs(self.saveSlots) do
         if slot:isHovered(x, y) then
             local slotData = slot.rawSlot
@@ -175,6 +188,27 @@ function Modal:draw()
     love.graphics.rectangle("line", backX, backY, b.w, b.h, 8)
     love.graphics.setFont(self.font)
     love.graphics.printf("Voltar", backX, backY + 8, b.w, "center")
+    
+    -- Botão configurações (engrenagem)
+    local s = self.settingsButton
+    local settingsX = modalX + s.offsetX
+    local settingsY = modalY + s.offsetY
+    love.graphics.setColor(0.3, 0.3, 0.3, self.alpha)
+    love.graphics.rectangle("fill", settingsX, settingsY, s.w, s.h, 8)
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    love.graphics.rectangle("line", settingsX, settingsY, s.w, s.h, 8)
+    -- Desenha ícone de engrenagem simples
+    love.graphics.setLineWidth(2)
+    love.graphics.circle("line", settingsX + s.w/2, settingsY + s.h/2, 12)
+    love.graphics.circle("line", settingsX + s.w/2, settingsY + s.h/2, 6)
+    for i = 0, 5 do
+        local angle = i * math.pi / 3
+        local x1 = settingsX + s.w/2 + math.cos(angle) * 8
+        local y1 = settingsY + s.h/2 + math.sin(angle) * 8
+        local x2 = settingsX + s.w/2 + math.cos(angle) * 14
+        local y2 = settingsY + s.h/2 + math.sin(angle) * 14
+        love.graphics.line(x1, y1, x2, y2)
+    end
     
     -- Draw save slots
     love.graphics.setFont(prevFont)

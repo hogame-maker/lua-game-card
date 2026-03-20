@@ -32,7 +32,7 @@ end
 function Button:update(dt)
     -- Animação smooth hover
     if self.hovered then
-        self.hoverScale = math.min(1.05, self.hoverScale + dt * 3)
+        self.hoverScale = math.min(1.1, self.hoverScale + dt * 3)
     else
         self.hoverScale = math.max(1, self.hoverScale - dt * 3)
     end
