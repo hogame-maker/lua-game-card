@@ -11,8 +11,8 @@ function InputDialog:new(title, placeholder, onConfirm, onCancel)
         onCancel = onCancel,
         
         -- Tamanho e posição
-        width = 600,
-        height = 300,
+        width = 500,
+        height = 250,
         
         -- Input
         inputText = "",
@@ -56,9 +56,9 @@ function InputDialog:show()
     if not self.confirmButton then
         local modalX = (1280 - self.width) / 2
         local modalY = (720 - self.height) / 2
-        local buttonY = modalY + 200
-        local btnW = 120
-        local btnH = 40
+        local buttonY = modalY + 160
+        local btnW = 100
+        local btnH = 35
         
         local confirmX = modalX + (self.width / 2) - btnW - 10
         local cancelX = modalX + (self.width / 2) + 10
@@ -120,9 +120,9 @@ function InputDialog:mousepressed(x, y, button)
     
     -- Check input field click
     local inputX = modalX + 50
-    local inputY = modalY + 120
+    local inputY = modalY + 100
     local inputWidth = self.width - 100
-    local inputHeight = 40
+    local inputHeight = 35
     
     if x >= inputX and x <= inputX + inputWidth and
        y >= inputY and y <= inputY + inputHeight then
@@ -193,9 +193,9 @@ function InputDialog:draw()
     
     -- Input field background
     local inputX = modalX + 50
-    local inputY = modalY + 120
+    local inputY = modalY + 100
     local inputWidth = self.width - 100
-    local inputHeight = 40
+    local inputHeight = 35
     
     love.graphics.setColor(unpack(self.inputBgColor))
     love.graphics.rectangle("fill", inputX, inputY, inputWidth, inputHeight, 5)
@@ -212,13 +212,13 @@ function InputDialog:draw()
     local displayText = #self.inputText > 0 and self.inputText or self.placeholder
     local textColor = #self.inputText > 0 and 1 or 0.5
     love.graphics.setColor(textColor, textColor, textColor, self.alpha)
-    love.graphics.print(displayText, inputX + 10, inputY + 8)
+    love.graphics.print(displayText, inputX + 10, inputY + 6)
     
     -- Cursor
     if self.inputActive and #self.inputText > 0 then
         love.graphics.setColor(1, 1, 1, self.cursorAlpha)
         local cursorX = inputX + 10 + self.inputFont:getWidth(self.inputText)
-        love.graphics.line(cursorX, inputY + 8, cursorX, inputY + inputHeight - 8)
+        love.graphics.line(cursorX, inputY + 6, cursorX, inputY + inputHeight - 6)
     end
     
     -- Desenha botões

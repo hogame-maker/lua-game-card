@@ -42,7 +42,7 @@ function GameMenu:new(gameState, onTemple, onTavern, onBattle, onReturn)
     end)
     
     -- Player info panel no canto superior esquerdo
-    obj.playerPanel = PlayerInfoPanel:new(10, 10, 400, 80, obj.player)
+    obj.playerPanel = PlayerInfoPanel:new(10, 10, 350, 70, obj.player)
     
     -- Botões do menu no lado esquerdo
     -- Templo - topo esquerdo
