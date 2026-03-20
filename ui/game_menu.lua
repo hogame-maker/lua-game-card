@@ -133,13 +133,13 @@ function GameMenu:draw()
     
     -- Divisões e botões
     -- Templo
-    self._drawMenuSection(100, 300, 250, 200, "TEMPLO", self.templeButton)
+    self:_drawMenuSection(100, 300, 250, 200, "TEMPLO", self.templeButton)
     
     -- Taverna
-    self._drawMenuSection(515, 300, 250, 200, "TAVERNA", self.tavernButton)
+    self:_drawMenuSection(515, 300, 250, 200, "TAVERNA", self.tavernButton)
     
     -- Batalha em Terrenos
-    self._drawMenuSection(930, 300, 250, 200, "BATALHA EM\nTERREÑOS", self.battleButton)
+    self:_drawMenuSection(930, 300, 250, 200, "BATALHA EM\nTERREÑOS", self.battleButton)
     
     -- Botões
     self.templeButton:draw()
