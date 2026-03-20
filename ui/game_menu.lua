@@ -54,9 +54,6 @@ function GameMenu:new(gameState, onTemple, onTavern, onBattle, onReturn)
     -- Batalha em Terrenos - baixo esquerdo
     obj.battleButton = Button:new(50, 350, 300, 80, "BATALHA EM\nTERREÑOS", onBattle)
     
-    -- Botão voltar (canto inferior esquerdo)
-    obj.returnButton = Button:new(50, 650, 120, 50, "Voltar", onReturn)
-    
     return obj
 end
 
@@ -80,7 +77,6 @@ function GameMenu:update(dt)
     self.templeButton:update(dt)
     self.tavernButton:update(dt)
     self.battleButton:update(dt)
-    self.returnButton:update(dt)
 end
 
 function GameMenu:mousemoved(x, y)
@@ -89,7 +85,6 @@ function GameMenu:mousemoved(x, y)
     self.templeButton.hovered = self.templeButton:isHovered(x, y)
     self.tavernButton.hovered = self.tavernButton:isHovered(x, y)
     self.battleButton.hovered = self.battleButton:isHovered(x, y)
-    self.returnButton.hovered = self.returnButton:isHovered(x, y)
     
     self.playerPanel:isHovered(x, y)
 end
@@ -103,8 +98,6 @@ function GameMenu:mousepressed(x, y, button)
         self.tavernButton:onClick()
     elseif self.battleButton:isHovered(x, y) then
         self.battleButton:onClick()
-    elseif self.returnButton:isHovered(x, y) then
-        self.returnButton:onClick()
     end
 end
 

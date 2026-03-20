@@ -29,6 +29,16 @@ local function exitGame()
     love.event.quit()
 end
 
+local function setupLoginButtons()
+    UIManager:clear()
+    local startButton = Button:new(540, 280, 200, 50, "Iniciar Game", startGame)
+    local exitButton = Button:new(540, 350, 200, 50, "Sair do Game", exitGame)
+    startButton.alpha = 1
+    exitButton.alpha = 1
+    UIManager:register(startButton)
+    UIManager:register(exitButton)
+end
+
 local function onSelectSave(saveIndex, saveData, slotUI)
     currentSaveIndex = saveIndex
     
@@ -62,16 +72,6 @@ local function onSelectSave(saveIndex, saveData, slotUI)
         selectSaveModal:hide()
         inputDialog:show()
     end
-end
-
-local function setupLoginButtons()
-    UIManager:clear()
-    local startButton = Button:new(540, 280, 200, 50, "Iniciar Game", startGame)
-    local exitButton = Button:new(540, 350, 200, 50, "Sair do Game", exitGame)
-    startButton.alpha = 1
-    exitButton.alpha = 1
-    UIManager:register(startButton)
-    UIManager:register(exitButton)
 end
 
 local function onPlayerNameConfirmed(playerName)
