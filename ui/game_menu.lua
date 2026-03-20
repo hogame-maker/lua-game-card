@@ -138,7 +138,6 @@ function GameMenu:draw()
     self.templeButton:draw()
     self.tavernButton:draw()
     self.battleButton:draw()
-    self.returnButton:draw()
     
     love.graphics.setColor(1, 1, 1)
 end
