@@ -44,15 +44,21 @@ function GameMenu:new(gameState, onTemple, onTavern, onBattle, onReturn)
     -- Player info panel no canto superior esquerdo
     obj.playerPanel = PlayerInfoPanel:new(10, 10, 350, 70, obj.player)
     
-    -- Botões do menu no lado esquerdo
-    -- Templo - topo esquerdo
-    obj.templeButton = Button:new(50, 150, 300, 80, "TEMPLO", onTemple)
+    -- Botões do menu centralizados e bem espaçados
+    local buttonWidth = 380
+    local buttonHeight = 90
+    local centerX = (1280 - buttonWidth) / 2
+    local startY = 150
+    local spacing = 140  -- Espaço entre botões
     
-    -- Taverna - meio esquerdo
-    obj.tavernButton = Button:new(50, 250, 300, 80, "TAVERNA", onTavern)
+    -- Templo
+    obj.templeButton = Button:new(centerX, startY, buttonWidth, buttonHeight, "TEMPLO", onTemple)
     
-    -- Batalha em Terrenos - baixo esquerdo
-    obj.battleButton = Button:new(50, 350, 300, 80, "BATALHA EM\nTERREÑOS", onBattle)
+    -- Taverna
+    obj.tavernButton = Button:new(centerX, startY + spacing, buttonWidth, buttonHeight, "TAVERNA", onTavern)
+    
+    -- Batalha em Terrenos
+    obj.battleButton = Button:new(centerX, startY + spacing * 2, buttonWidth, buttonHeight, "BATALHA EM\nTERREÑOS", onBattle)
     
     return obj
 end
@@ -124,41 +130,22 @@ function GameMenu:draw()
     -- Player panel
     self.playerPanel:draw()
     
-    -- Divisões e botões
-    -- Templo
-    self:_drawMenuSection(100, 300, 250, 200, "TEMPLO", self.templeButton)
+    -- Título do menu
+    local titleFont = love.graphics.newFont(32)
+    local prevFont = love.graphics.getFont()
+    love.graphics.setFont(titleFont)
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    local titleText = "Modos de Jogo"
+    local titleWidth = titleFont:getWidth(titleText)
+    love.graphics.print(titleText, (1280 - titleWidth) / 2, 90)
+    love.graphics.setFont(prevFont)
     
-    -- Taverna
-    self:_drawMenuSection(515, 300, 250, 200, "TAVERNA", self.tavernButton)
-    
-    -- Batalha em Terrenos
-    self:_drawMenuSection(930, 300, 250, 200, "BATALHA EM\nTERREÑOS", self.battleButton)
-    
-    -- Botões
+    -- Botões do menu
     self.templeButton:draw()
     self.tavernButton:draw()
     self.battleButton:draw()
     
     love.graphics.setColor(1, 1, 1)
-end
-
-function GameMenu:_drawMenuSection(x, y, w, h, label, button)
-    -- Sombra
-    love.graphics.setColor(0, 0, 0, 0.5 * self.alpha)
-    love.graphics.rectangle("fill", x + 3, y + 3, w, h, 10)
-    
-    -- Fundo
-    love.graphics.setColor(0.15, 0.15, 0.15, 0.9 * self.alpha)
-    love.graphics.rectangle("fill", x, y, w, h, 10)
-    
-    -- Borda com cor especial se hovering
-    if button.hovered then
-        love.graphics.setColor(0.8, 0.4, 0.2, self.alpha)
-    else
-        love.graphics.setColor(0.5, 0.5, 0.5, self.alpha)
-    end
-    love.graphics.setLineWidth(2)
-    love.graphics.rectangle("line", x, y, w, h, 10)
 end
 
 return GameMenu
