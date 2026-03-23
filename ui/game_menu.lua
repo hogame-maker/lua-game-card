@@ -44,21 +44,21 @@ function GameMenu:new(gameState, onTemple, onTavern, onBattle, onReturn)
     -- Player info panel no canto superior esquerdo
     obj.playerPanel = PlayerInfoPanel:new(10, 10, 350, 70, obj.player)
     
-    -- Botões do menu centralizados e bem espaçados
-    local buttonWidth = 380
-    local buttonHeight = 90
-    local centerX = (1280 - buttonWidth) / 2
-    local startY = 150
-    local spacing = 140  -- Espaço entre botões
+    -- Botões do menu no lado esquerdo, alinhados verticalmente
+    local buttonWidth = 300
+    local buttonHeight = 85
+    local leftX = 70
+    local startY = 200
+    local spacing = 130  -- Espaço entre botões
     
     -- Templo
-    obj.templeButton = Button:new(centerX, startY, buttonWidth, buttonHeight, "TEMPLO", onTemple)
+    obj.templeButton = Button:new(leftX, startY, buttonWidth, buttonHeight, "TEMPLO", onTemple)
     
     -- Taverna
-    obj.tavernButton = Button:new(centerX, startY + spacing, buttonWidth, buttonHeight, "TAVERNA", onTavern)
+    obj.tavernButton = Button:new(leftX, startY + spacing, buttonWidth, buttonHeight, "TAVERNA", onTavern)
     
     -- Batalha em Terrenos
-    obj.battleButton = Button:new(centerX, startY + spacing * 2, buttonWidth, buttonHeight, "BATALHA EM\nTERREÑOS", onBattle)
+    obj.battleButton = Button:new(leftX, startY + spacing * 2, buttonWidth, buttonHeight, "BATALHA EM\nTERREÑOS", onBattle)
     
     return obj
 end
@@ -129,16 +129,6 @@ function GameMenu:draw()
     
     -- Player panel
     self.playerPanel:draw()
-    
-    -- Título do menu
-    local titleFont = love.graphics.newFont(32)
-    local prevFont = love.graphics.getFont()
-    love.graphics.setFont(titleFont)
-    love.graphics.setColor(1, 1, 1, self.alpha)
-    local titleText = "Modos de Jogo"
-    local titleWidth = titleFont:getWidth(titleText)
-    love.graphics.print(titleText, (1280 - titleWidth) / 2, 90)
-    love.graphics.setFont(prevFont)
     
     -- Botões do menu
     self.templeButton:draw()
